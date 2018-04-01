@@ -2,7 +2,9 @@ package com.example.demo;
 
 import com.example.demo.model.Stock;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -15,29 +17,28 @@ public class TestController {
     @GetMapping(path = {"/thymeleaf"})
     public ModelAndView showPage() {
 
-        List<Stock> dummyItems = Stock.dummyItems();
+        ModelAndView model = new ModelAndView("stocks");
+        model.addObject("items", Stock.dummyItems());
+        return model;
 
-//        return new ModelAndView("thymeleaf/th-page", "items", dummyItems);
-        return new ModelAndView("th-page", "items", dummyItems);
+//        return getDefaultView(Optional.of("thymeleaf"), "/stocks");
     }
 
     @GetMapping(path = {"/jsp"})
     public ModelAndView showJspPage() {
 
-        List<Stock> dummyItems = Stock.dummyItems();
-
-        return new ModelAndView("jsp/welcome", "items", dummyItems);
+        return getDefaultView(Optional.empty(), "/welcome");
     }
 
-//    @GetMapping("/jsp")
-//    String jspPage(Model model,@RequestParam String name) {
-//        model.addAttribute("name", name);
-//        return "jsp/sample";
-//    }
-//
-//    @GetMapping("/thymeleaf")
-//    String thymeleafPage(Model model,@RequestParam String name) {
-//        model.addAttribute("name", name);
-//        return "thymeleaf/sample";
-//    }
+    private ModelAndView getDefaultView(Optional<String> viewResolver, String viewName) {
+        ModelAndView model = new ModelAndView(createView(viewResolver, viewName));
+        model.addObject("items", Stock.dummyItems());
+        return model;
+    }
+
+    private String createView(Optional<String> viewResolver, String viewName) {
+        String result = viewResolver.isPresent() ? viewResolver.get() : "jsp";
+        result += viewName;
+        return result;
+    }
 }
