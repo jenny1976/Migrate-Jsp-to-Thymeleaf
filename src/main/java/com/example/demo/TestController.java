@@ -18,10 +18,14 @@ public class TestController {
     }
 
     @GetMapping(path = {"/jsp"})
-
     public ModelAndView showJspPage() {
 
         return new ModelAndView("jsp/welcome", "items", Stock.dummyItems());
     }
 
+    @GetMapping(path = {"/mixed"})
+    public ModelAndView mixedPage() {
+
+        return new ModelAndView("jsp/mixed", "items", Stock.dummyItems());
+    }
 }
